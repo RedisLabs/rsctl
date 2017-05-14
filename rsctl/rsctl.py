@@ -1,0 +1,79 @@
+import tasks
+import click
+import fabric.api as fab
+import os
+import config
+
+
+@click.group()
+@click.option('--host', prompt='Host Name ($SSH_HOST)', envvar = config.SSH_HOST, 
+              help='Master RLEC IP/domain')
+@click.option('--user', prompt='SSH User ($SSH_USER)', default=os.getenv(config.SSH_USER, 'redis'), 
+              help='SSH Login User')
+@click.option('--rl_user', prompt='RLEC Login Email ($RL_USER)', default=os.getenv(config.RL_USER, 'user@example.com'), 
+              help='RLEC User Name')
+@click.option('--rl_password', prompt='RLEC Password ($RL_PASS)', hide_input=True, default=os.getenv(config.RL_PASS, None), 
+              help='RLEC Password')
+@click.option('--rl_datadir', prompt='RLEC data dir ($RL_DATADIR)', default=os.getenv(config.RL_DATADIR, '/mnt/data'), 
+              help='RLEC Password')
+def cli(host, user, rl_user, rl_password, rl_datadir):
+    """
+    RediSearch on RedisLabs Enterprise Cluster control utility
+    """
+    config.host = host
+    config.user = user
+    config.rlec_user = rl_user
+    config.rlec_password = rl_password
+    config.rlec_datadir = rl_datadir
+    
+    fab.env.host_string = host
+    fab.env.user = user
+    fab.env.roledefs = {
+        'rlec': [host],
+        'rlec_master': [host]
+    }
+
+@cli.command()
+@click.option('--s3_accesskey', prompt = 'S3 Access Key',  help = 'S3 Access Key')
+@click.option('--s3_secretkey', prompt = 'S3 Secret Key',  help = 'S3 Secret Key')
+def get_modules(s3_accesskey, s3_secretkey):
+    """
+    Install RS and Coordinator modules
+    """
+    fab.execute(tasks.get_modules, s3_accesskey, s3_secretkey)
+
+
+@cli.command()
+@click.option('--name', prompt = 'Database Name', default='mydb', help='Database Name')
+@click.option('--shards', prompt = 'Number of Search Partitions (Shards)', default=3, help='Number of Search Partitions (Shards)')
+@click.option('--maxmemory', prompt='Database Memory Limit (in GB)', default='4', help='Database Memory Limit (in GB)')
+@click.option('--replication',is_flag=True, default=False, prompt='Enable Replication')
+def create_db(name, shards, maxmemory, replication):
+    """
+    Create a new RS/RL Database
+    """
+    fab.execute(tasks.create_database, name, shards, maxmemory, replication)
+
+@cli.command()
+@click.option('--rlec_installer', prompt = 'Path to RLEC installation .tar file',  help = 'Path to RLEC installation .tar file')
+def bootstrap_machine(rlec_installer, s3_accesskey, s3_secretkey):
+    """
+    Bootstrap a new RLEC/RediSearch maching and install the essential stuff
+    """
+    fab.execute(tasks.install_essentials)
+    fab.execute(tasks.install_redis)
+    fab.execute(tasks.install_rlec, rlec_installer)
+
+@cli.command()
+@click.option('--name', prompt = 'Cluster Name', default='MyCluster', help='Cluster Name')
+@click.option('--license_file', prompt = 'LICENSE file path', default='license.txt', help='LICENSE file path')
+def create_cluster(name, license_file):
+    """
+    Create a new RLEC cluster
+    """
+    fab.execute(tasks.create_cluster, name, license_file)
+
+
+
+if __name__ == '__main__':
+    cli()
