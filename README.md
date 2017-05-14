@@ -27,15 +27,19 @@ Rsctl can automate this with the commands `rsctl bootstrap_machine` and `rsctl c
 
 ### 1. Downloading the modules
 
+The module packages are stored on a special AWS S3 bucket. If you have access to it, use the command:
+
 ```sh
 $ rsctl get_modules [--s3_accesskey {KEY} --s3_secretkey {SECRET}]
 ```
 
-This downloads the **latest versions** of both modules to the destinatino machine, but does not install them yet.
+This downloads the **latest versions** of both modules to the destinatino machine, but does not install them yet. If the S3 credentials are not provided, you will be prompted to provide them. The AWS S3 keypair must be authorized to access the bucket where the modules are stored.
 
-If the S3 credentials are not provided, you will be prompted to provide them.
+**NOTE:** If you do not have access, but have received the module package files manually, you can either upload them to the home directory of the ssh user on the server, or use the following command:
 
-**NOTE**: The AWS S3 keypair must be authorized to access the bucket where the modules are stored.
+```sh
+$  rsctl upload_modules --redisearch /path/to/redisearch.zip --coordinator /path/to/rscoordinator.zip
+```
 
 ### 2. Create the database with the modules
 
