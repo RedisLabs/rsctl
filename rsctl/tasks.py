@@ -97,6 +97,17 @@ def get_modules(s3_ak, s3_sk):
     get_module('rscoordinator', s3_ak, s3_sk)
   
 
+@roles("rlec_master")
+def upload_modules(rsmod, rscoord_mod):
+    """
+    Upload the modules from local machine to the target machine
+    """
+
+    if rsmod:
+        put(rsmod, 'redisearch.zip')
+    if rscoord_mod:
+        put(rscoord_mod, 'rscoordinator.zip')
+  
 
 
 @task

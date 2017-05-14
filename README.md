@@ -136,6 +136,21 @@ Options:
     S3 Secret Key
 ```
 
+# rsctl upload_modules
+
+Upload module packages from the local machine to the server. Use this instead of get_modules when you do not have access to the S3 bucket where the modules are stored.
+
+Options:
+```
+  --redisearch TEXT   
+    
+    Local RediSearch packge file path
+
+  --coordinator TEXT  
+    
+    Local RSCoordinator packge file path
+```
+
 # rsctl create_db
 
 Creates a new database with both modules loaded. 

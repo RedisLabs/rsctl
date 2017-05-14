@@ -75,6 +75,15 @@ def create_cluster(name, license_file):
     """
     fab.execute(tasks.create_cluster, name, license_file)
 
+@cli.command()
+@click.option('--redisearch', prompt = 'RediSearch package file', default='redisearch.zip', help='Local RediSearch packge file path')
+@click.option('--coordinator', prompt = 'RSCoordinator package file', default='rscoordinator.zip', help='Local RSCoordinator packge file path')
+def upload_modules(redisearch, coordinator):
+    """
+    Upload module packages from the local machine to the server. 
+    """
+    fab.execute(tasks.upload_modules, redisearch, coordinator)
+
 
 #register_repl(cli)
 if __name__ == '__main__':
