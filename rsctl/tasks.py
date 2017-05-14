@@ -1,9 +1,11 @@
 import os
 import itertools
 from fabric.api import *
+from fabric.api import run as _run
 from fabric.contrib import files
 import json
-import config
+from rsctl import config
+
 git_root = "git@github.com"
 
 

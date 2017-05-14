@@ -1,22 +1,22 @@
 #!/usr/bin/env python 
-import tasks
+from rsctl import tasks, config
 import click
 import fabric.api as fab
 import os
-import config
+
 
 
 @click.group()
 @click.option('--host', prompt='Host Name ($SSH_HOST)', envvar = config.SSH_HOST, 
-              help='Master RLEC IP/domain')
-@click.option('--user', prompt='SSH User ($SSH_USER)', default=os.getenv(config.SSH_USER, 'redis'), 
-              help='SSH Login User')
-@click.option('--rl_user', prompt='RLEC Login Email ($RL_USER)', default=os.getenv(config.RL_USER, 'user@example.com'), 
-              help='RLEC User Name')
-@click.option('--rl_password', prompt='RLEC Password ($RL_PASS)', hide_input=True, default=os.getenv(config.RL_PASS, None), 
-              help='RLEC Password')
-@click.option('--rl_datadir', prompt='RLEC data dir ($RL_DATADIR)', default=os.getenv(config.RL_DATADIR, '/mnt/data'), 
-              help='RLEC Password')
+              help='Master RLEC IP ($SSH_HOST)')
+@click.option('--user', prompt='SSH User ($SSH_USER)', envvar = config.SSH_USER, default='redis', 
+              help='SSH Login User ($SSH_USER)')
+@click.option('--rl_user', prompt='RLEC Login Email ($RL_USER)', envvar = config.RL_USER, default = 'user@example.com', 
+              help='RLEC User Name ($RL_USER)')
+@click.option('--rl_password', prompt='RLEC Password ($RL_PASS)', hide_input=True, envvar = config.RL_PASS, 
+              help='RLEC Password ($RL_PASS)')
+@click.option('--rl_datadir', prompt='RLEC data dir ($RL_DATADIR)', envvar = config.RL_DATADIR, default='/mnt/data', 
+              help='RLEC Data dir ($RL_DATADIR)')
 def cli(host, user, rl_user , rl_password, rl_datadir):
     """
     RediSearch on RedisLabs Enterprise Cluster control utility
@@ -49,7 +49,7 @@ def get_modules(s3_accesskey, s3_secretkey):
 @click.option('--name', prompt = 'Database Name', default='mydb', help='Database Name')
 @click.option('--shards', prompt = 'Number of Search Partitions (Shards)', default=3, help='Number of Search Partitions (Shards)')
 @click.option('--maxmemory', prompt='Database Memory Limit (in GB)', default='4', help='Database Memory Limit (in GB)')
-@click.option('--replication',is_flag=True, default=False, prompt='Enable Replication')
+@click.option('--replication',is_flag=True, default=False, prompt='Enable Replication', help='If set, replication is enabled')
 def create_db(name, shards, maxmemory, replication):
     """
     Create a new RS/RL Database
