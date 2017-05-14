@@ -1,3 +1,4 @@
+#!/usr/bin/env python 
 import tasks
 import click
 import fabric.api as fab
@@ -16,7 +17,7 @@ import config
               help='RLEC Password')
 @click.option('--rl_datadir', prompt='RLEC data dir ($RL_DATADIR)', default=os.getenv(config.RL_DATADIR, '/mnt/data'), 
               help='RLEC Password')
-def cli(host, user, rl_user, rl_password, rl_datadir):
+def cli(host, user, rl_user , rl_password, rl_datadir):
     """
     RediSearch on RedisLabs Enterprise Cluster control utility
     """
@@ -33,12 +34,13 @@ def cli(host, user, rl_user, rl_password, rl_datadir):
         'rlec_master': [host]
     }
 
+
 @cli.command()
 @click.option('--s3_accesskey', prompt = 'S3 Access Key',  help = 'S3 Access Key')
 @click.option('--s3_secretkey', prompt = 'S3 Secret Key',  help = 'S3 Secret Key')
 def get_modules(s3_accesskey, s3_secretkey):
     """
-    Install RS and Coordinator modules
+    Download RS and Coordinator modules
     """
     fab.execute(tasks.get_modules, s3_accesskey, s3_secretkey)
 
@@ -74,6 +76,8 @@ def create_cluster(name, license_file):
     fab.execute(tasks.create_cluster, name, license_file)
 
 
-
+#register_repl(cli)
 if __name__ == '__main__':
     cli()
+    
+
