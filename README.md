@@ -11,7 +11,8 @@ It is invoked via a single command - `rsctl`, that connects to a remote server a
 # Installing rsctl
 
 ```sh
-$ cd /path/to/rsctl
+$ git clone https://github.com/RedisLabs/rsctl
+$ cd rsctl
 $ sudo python setup.py install
 ```
 
