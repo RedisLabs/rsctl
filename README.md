@@ -35,7 +35,7 @@ This downloads the **latest versions** of both modules to the destinatino machin
 
 If the S3 credentials are not provided, you will be prompted to provide them.
 
-**NOTE**: The AWS S3 keypair must be authorized to access the bucket where the modules are stored. Contact @Dvir for further details.
+**NOTE**: The AWS S3 keypair must be authorized to access the bucket where the modules are stored.
 
 ### 2. Create the database with the modules
 
@@ -154,7 +154,7 @@ Options
   --maxmemory TEXT  
   
     Database Memory Limit (in GB)
-    
+
   --replication     
     If set, replication is enabled
 ```
