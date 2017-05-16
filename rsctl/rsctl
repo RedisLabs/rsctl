@@ -11,13 +11,14 @@ import os
               help='Master RLEC IP ($SSH_HOST)')
 @click.option('--user', prompt='SSH User ($SSH_USER)', envvar = config.SSH_USER, default='redis', 
               help='SSH Login User ($SSH_USER)')
+@click.option('--pem', envvar=config.PEM_FILE, default=None, help='optional .pem file for ssh connections')
 @click.option('--rl_user', prompt='RLEC Login Email ($RL_USER)', envvar = config.RL_USER, default = 'user@example.com', 
               help='RLEC User Name ($RL_USER)')
 @click.option('--rl_password', prompt='RLEC Password ($RL_PASS)', hide_input=True, envvar = config.RL_PASS, 
               help='RLEC Password ($RL_PASS)')
 @click.option('--rl_datadir', prompt='RLEC data dir ($RL_DATADIR)', envvar = config.RL_DATADIR, default='/mnt/data', 
               help='RLEC Data dir ($RL_DATADIR)')
-def cli(host, user, rl_user , rl_password, rl_datadir):
+def cli(host, user, pem, rl_user , rl_password, rl_datadir):
     """
     RediSearch on RedisLabs Enterprise Cluster control utility
     """
@@ -29,6 +30,8 @@ def cli(host, user, rl_user , rl_password, rl_datadir):
     
     fab.env.host_string = host
     fab.env.user = user
+    if pem is not None:
+        fab.env.key_filename = pem
     fab.env.roledefs = {
         'rlec': [host],
         'rlec_master': [host]
