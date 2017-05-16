@@ -6,7 +6,7 @@ RediSearch/RSCoordinator distributed search control utility
 
 This package contains scripts to help administration and set-up of RedisLabs enterprise cluster, with RediSearch and RSCoordinator - providing a powerful distributed search engine over Redis.
 
-It is invoked via a single command - `rsctl`, that connects to a remote server and configures redis clusters on it. It is intended to run remotely and connect to the master RLEC server via SSH.
+It is invoked via a single command - `rsctl`, that connects to a remote server and configures redis clusters on it. It is intended to run remotely and connect to the master Redis Pack server via SSH.
 
 # Installing rsctl
 
@@ -16,11 +16,23 @@ $ cd rsctl
 $ sudo python setup.py install
 ```
 
+# Note on SSH Login
+
+If you have a key pair for SSH login to the server, it can be specified with the `--pem` option or the `SSH_PEM` environment variable. 
+
+If it is not given, we use the default ssh key pair as if connecting to the server with ssh with no extra arguments.
+
+# Note on Redis Pack Credentials
+
+You need to provide the commands with Redis Pack (Redis Labs Enterprise Cluster) login credentials.
+
+These are the email and password you set when creating the cluster.
+
 ---
 
 # Using rsctl to configure a RedisLabs Enterprise RediSearch Cluster
 
-### 0. Install and configure RLEC cluster
+### 0. Install and configure Redis Pack cluster
 
 The steps for that are not detailed in this scope. We assume you have a cluster ready with a version that supports modules. 
 
@@ -56,9 +68,9 @@ $ rsctl create_db
 # Interactive Prompt Below
 > Host Name ($SSH_HOST): 1.2.3.4
 > SSH User ($SSH_USER) [redis]:
-> RLEC Login Email ($RL_USER) [user@example.com]:
-> RLEC Password ($RL_PASS):
-> RLEC data dir ($RL_DATADIR) [/mnt/data]:
+> Redis Pack Login Email ($RL_USER) [user@example.com]:
+> Redis Pack Password ($RL_PASS):
+> Redis Pack data dir ($RL_DATADIR) [/mnt/data]:
 > Database Name [mydb]:
 > Number of Search Partitions (Shards) [3]:
 > Database Memory Limit (in GB) [4]: 15
@@ -90,27 +102,28 @@ Options are provided either via environment variables, command-line arguments, o
 
 | Command Line | Env. Var | Description | Default |
 |---|---|---|---|
-| --host | SSH_HOST|   Master RLEC IP Address | n/a |
+|  --pem | Optional .pem file for ssh connections | n/a |
+| --host | SSH_HOST|   Master Redis Pack IP Address | n/a |
 | --user | SSH_USER |  SSH Login User | redis |
-|  --rl_user | RL_USER |   RLEC User Name | user@example.com |
-| --rl_password | RL_PASS | RLEC Password | n/a |
-| --rl_datadir | RL_DATADIR | RLEC Data storage dir | /mnt/data |
+|  --rl_user | RL_USER |   Redis Pack User Name | user@example.com |
+| --rl_password | RL_PASS | Redis Pack Password | n/a |
+| --rl_datadir | RL_DATADIR | Redis Pack Data storage dir | /mnt/data |
 
 
 # rsctl bootstrap_machine
 
-Bootstraps a new RLEC/RediSearch maching and install the essential stuff.
+Bootstraps a new Redis Pack/RediSearch maching and install the essential stuff.
 
 Options:
 
 ``` 
    --rlec_installer
    
-     Path to RLEC installation .tar file on the local machine. It gets uploaded to the target machine.
+     Path to Redis Pack installation .tar file on the local machine. It gets uploaded to the target machine.
 ```
 # rsctl create_cluster
 
-Creates a new RLEC cluster
+Creates a new Redis Pack cluster
 
 Options:
 ```

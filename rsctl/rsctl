@@ -8,16 +8,16 @@ import os
 
 @click.group()
 @click.option('--host', prompt='Host Name ($SSH_HOST)', envvar = config.SSH_HOST, 
-              help='Master RLEC IP ($SSH_HOST)')
+              help='Master Redis Pack IP ($SSH_HOST)')
 @click.option('--user', prompt='SSH User ($SSH_USER)', envvar = config.SSH_USER, default='redis', 
               help='SSH Login User ($SSH_USER)')
-@click.option('--pem', envvar=config.PEM_FILE, default=None, help='optional .pem file for ssh connections')
-@click.option('--rl_user', prompt='RLEC Login Email ($RL_USER)', envvar = config.RL_USER, default = 'user@example.com', 
-              help='RLEC User Name ($RL_USER)')
-@click.option('--rl_password', prompt='RLEC Password ($RL_PASS)', hide_input=True, envvar = config.RL_PASS, 
-              help='RLEC Password ($RL_PASS)')
-@click.option('--rl_datadir', prompt='RLEC data dir ($RL_DATADIR)', envvar = config.RL_DATADIR, default='/mnt/data', 
-              help='RLEC Data dir ($RL_DATADIR)')
+@click.option('--pem', prompt='SSH .pem file (optional) ($SSH_PEM)', envvar=config.PEM_FILE, default='', help='optional .pem file for ssh connections')
+@click.option('--rl_user', prompt='Redis Pack Login Email ($RL_USER)', envvar = config.RL_USER, default = 'user@example.com', 
+              help='Redis Pack User Name ($RL_USER)')
+@click.option('--rl_password', prompt='Redis Pack Password ($RL_PASS)', hide_input=True, envvar = config.RL_PASS, 
+              help='Redis Pack Password ($RL_PASS)')
+@click.option('--rl_datadir', prompt='Redis Pack data dir ($RL_DATADIR)', envvar = config.RL_DATADIR, default='/mnt/data', 
+              help='Redis Pack Data dir ($RL_DATADIR)')
 def cli(host, user, pem, rl_user , rl_password, rl_datadir):
     """
     RediSearch on RedisLabs Enterprise Cluster control utility
@@ -30,7 +30,7 @@ def cli(host, user, pem, rl_user , rl_password, rl_datadir):
     
     fab.env.host_string = host
     fab.env.user = user
-    if pem is not None:
+    if pem is not None and pem != '':
         fab.env.key_filename = pem
     fab.env.roledefs = {
         'rlec': [host],
@@ -60,10 +60,10 @@ def create_db(name, shards, maxmemory, replication):
     fab.execute(tasks.create_database, name, shards, maxmemory, replication)
 
 @cli.command()
-@click.option('--rlec_installer', prompt = 'Path to RLEC installation .tar file',  help = 'Path to RLEC installation .tar file')
+@click.option('--rlec_installer', prompt = 'Path to Redis Pack installation .tar file',  help = 'Path to Redis Pack installation .tar file')
 def bootstrap_machine(rlec_installer, s3_accesskey, s3_secretkey):
     """
-    Bootstrap a new RLEC/RediSearch maching and install the essential stuff
+    Bootstrap a new Redis Pack/RediSearch maching and install the essential stuff
     """
     fab.execute(tasks.install_essentials)
     fab.execute(tasks.install_redis)
@@ -74,7 +74,7 @@ def bootstrap_machine(rlec_installer, s3_accesskey, s3_secretkey):
 @click.option('--license_file', prompt = 'LICENSE file path', default='license.txt', help='LICENSE file path')
 def create_cluster(name, license_file):
     """
-    Create a new RLEC cluster
+    Create a new Redis Pack cluster
     """
     fab.execute(tasks.create_cluster, name, license_file)
 
