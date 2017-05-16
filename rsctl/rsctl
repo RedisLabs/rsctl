@@ -31,7 +31,9 @@ def cli(host, user, pem, rl_user , rl_password, rl_datadir):
     fab.env.host_string = host
     fab.env.user = user
     if pem is not None and pem != '':
+        print "Using pem file at ", pem
         fab.env.key_filename = pem
+    
     fab.env.roledefs = {
         'rlec': [host],
         'rlec_master': [host]

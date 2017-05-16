@@ -92,6 +92,10 @@ def get_modules(s3_ak, s3_sk):
     """
     Download the latest versions of both needed modules to the destination server
     """
+    # Install pip if not present
+    sudo("which pip || apt-get install python-pip")
+    # Install s3cmd if not present
+    sudo("which s3cmd || pip install install s3cmd")
 
     get_module('redisearch', s3_ak, s3_sk)
     get_module('rscoordinator', s3_ak, s3_sk)
