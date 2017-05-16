@@ -102,7 +102,7 @@ Options are provided either via environment variables, command-line arguments, o
 
 | Command Line | Env. Var | Description | Default |
 |---|---|---|---|
-|  --pem | Optional .pem file for ssh connections | n/a |
+|  --pem | SSH_PEM | Optional .pem file for ssh connections | n/a |
 | --host | SSH_HOST|   Master Redis Pack IP Address | n/a |
 | --user | SSH_USER |  SSH Login User | redis |
 |  --rl_user | RL_USER |   Redis Pack User Name | user@example.com |
