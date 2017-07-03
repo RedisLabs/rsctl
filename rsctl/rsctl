@@ -63,7 +63,7 @@ def create_db(name, shards, maxmemory, replication):
 
 @cli.command()
 @click.option('--rlec_installer', prompt = 'Path to Redis Pack installation .tar file',  help = 'Path to Redis Pack installation .tar file')
-def bootstrap_machine(rlec_installer, s3_accesskey, s3_secretkey):
+def bootstrap_machine(rlec_installer):
     """
     Bootstrap a new Redis Pack/RediSearch maching and install the essential stuff
     """
@@ -81,13 +81,12 @@ def create_cluster(name, license_file):
     fab.execute(tasks.create_cluster, name, license_file)
 
 @cli.command()
-@click.option('--redisearch', prompt = 'RediSearch package file', default='redisearch.zip', help='Local RediSearch packge file path')
 @click.option('--coordinator', prompt = 'RSCoordinator package file', default='rscoordinator.zip', help='Local RSCoordinator packge file path')
-def upload_modules(redisearch, coordinator):
+def upload_modules(coordinator):
     """
     Upload module packages from the local machine to the server. 
     """
-    fab.execute(tasks.upload_modules, redisearch, coordinator)
+    fab.execute(tasks.upload_modules, coordinator)
 
 
 #register_repl(cli)

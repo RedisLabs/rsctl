@@ -71,14 +71,13 @@ def rladmin(cmd):
 def create_database(db_name, num_shards, max_memory, replication):
 
     rladmin('tune cluster default_shards_placement sparse')
-    search_uid = deploy_module( 'redisearch.zip')
     coord_uid = deploy_module( 'rscoordinator.zip')
     run("""curl -k -X POST -u "{rlec_user}:{rlec_pass}" -H "Content-Type: application/json" \
         -d '{{ "name": "{db_name}", "replication":{replication}, "sharding":true, "shards_count":{num_shards}, "version": "4.0", "memory_size": {mem_size}, "type": "redis", \
-        "module_list":["{coord_uid}","{search_uid}"], "module_list_args":["PARTITIONS {num_partitions} TYPE redislabs", "PARTITIONS {num_partitions} TYPE redislabs"] }}' \
+        "module_list":["{coord_uid}"], "module_list_args":["PARTITIONS {num_partitions} TYPE redislabs"] }}' \
         https://127.0.0.1:9443/v1/bdbs""".format(rlec_user=config.rlec_user, rlec_pass=config.rlec_password, db_name=db_name,
         num_shards=num_shards, num_partitions=num_shards, mem_size=int(max_memory)*1000000000, 
-        search_uid=search_uid, coord_uid=coord_uid, replication='true' if replication else 'false'))
+        coord_uid=coord_uid, replication='true' if replication else 'false'))
     
 
 def get_module(modulename, s3_ak, s3_sk):
@@ -97,18 +96,15 @@ def get_modules(s3_ak, s3_sk):
     # Install s3cmd if not present
     sudo("which s3cmd || pip install install s3cmd")
 
-    get_module('redisearch', s3_ak, s3_sk)
     get_module('rscoordinator', s3_ak, s3_sk)
   
 
 @roles("rlec_master")
-def upload_modules(rsmod, rscoord_mod):
+def upload_modules(rscoord_mod):
     """
     Upload the modules from local machine to the target machine
     """
 
-    if rsmod:
-        put(rsmod, 'redisearch.zip')
     if rscoord_mod:
         put(rscoord_mod, 'rscoordinator.zip')
   
