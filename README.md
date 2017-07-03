@@ -1,10 +1,10 @@
 # rsctl
 
-RediSearch/RSCoordinator distributed search control utility
+RediSearch Enterprise Distributed Search control utility
 
 # About
 
-This package contains scripts to help administration and set-up of RedisLabs enterprise cluster, with RSCoordinator - the distributed RediSearch enterprise version.
+This package contains scripts to help administration and set-up of RedisLabs enterprise cluster, with the enterprise distributed version of RediSearch.
 
 It is invoked via a single command - `rsctl`, that connects to a remote server and configures redis clusters on it. It is intended to run remotely and connect to the master Redis Pack server via SSH.
 
