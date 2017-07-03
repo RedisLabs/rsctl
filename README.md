@@ -40,17 +40,18 @@ Rsctl can automate this with the commands `rsctl bootstrap_machine` and `rsctl c
 
 ### 1. Downloading the module
 
-The module package is stored on a special AWS S3 bucket. If you have access to it, use the command:
+The module package is stored on a public AWS S3 bucket.
 
 ```sh
-$ rsctl get_module [--s3_accesskey {KEY} --s3_secretkey {SECRET}]
+$ rsctl get_module
 ```
 
-This downloads the **latest version** of  the  module **to the destination machine**, but does not install it yet. If the S3 credentials are not provided, you will be prompted to provide them. The AWS S3 key-pair must be authorized to access the bucket where the module is stored.
+This downloads the **latest version** of  the  module **to the destination machine**, but does not install it yet.
 
-**NOTE:** If you do not have access, but have received the module package files manually, you can either upload them to the home directory of the ssh user on the server, or use the following command:
+**NOTE:** If the server does not have access to the outside world, you can download the module manually and upload it:
 
 ```sh
+$  curl -o rscoordinator.zip https://redismodules.s3.amazonaws.com/rscoordinator/rscoordinator.Linux-x86_64.latest.zip
 $  rsctl upload_module rscoordinator.zip
 ```
 
@@ -139,20 +140,6 @@ Options:
 # rsctl get_module
 
 Downloads the coordinated search module from AWS S3. 
-
-**NOTE**: The AWS S3 keypair must be authorized to access the bucket where the module is stored. Contact @Dvir for further details.
-
-Options:
-
-```
-  --s3_accesskey TEXT  
-  
-    S3 Access Key
-  
-  --s3_secretkey TEXT  
-    
-    S3 Secret Key
-```
 
 # rsctl upload_module {module-file.zip}
 

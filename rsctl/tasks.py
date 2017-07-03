@@ -3,14 +3,16 @@ import itertools
 from fabric.api import *
 from fabric.api import run as _run
 from fabric.contrib import files
+from fabric.colors import yellow, red, green
+
 import json
 from rsctl import config
 
 git_root = "git@github.com"
+module_file = 'rscoordinator.zip'
 
-
-apt_gets = ["git-core", "ruby", "build-essential", "gdb", 'htop', 'libuv-dev', 'python-dev', 'python-setuptools', 'python-pip', 'unzip', 's3cmd']
-pips = ['ramp-packer', 'boto']
+apt_gets = ["git-core", "ruby", "build-essential", "gdb", 'htop', 'libuv-dev', 'python-dev', 'python-setuptools', 'python-pip', 'unzip']
+pips = ['ramp-packer']
 
 env.roledefs = {
     'rlec': [],
@@ -36,7 +38,7 @@ def fetch_git_repo(namespace, name, keyFile = None):
     Fetch sources from a git repo by cloning or pulling
     """
 
-    puts("Cloning {} from git...".format(git_url(namespace, name)))
+    puts(green("Cloning {} from git...".format(git_url(namespace, name))))
 
     with settings(warn_only=True):
         
@@ -71,7 +73,11 @@ def rladmin(cmd):
 def create_database(db_name, num_shards, max_memory, replication):
 
     rladmin('tune cluster default_shards_placement sparse')
-    coord_uid = deploy_module( 'rscoordinator.zip')
+    if not files.exists(module_file):
+        puts(yellow("We need to download the latest version of the module now..."))
+        get_module()
+    
+    coord_uid = deploy_module(module_file)
     run("""curl -k -X POST -u "{rlec_user}:{rlec_pass}" -H "Content-Type: application/json" \
         -d '{{ "name": "{db_name}", "replication":{replication}, "sharding":true, "shards_count":{num_shards}, "version": "4.0", "memory_size": {mem_size}, "type": "redis", \
         "module_list":["{coord_uid}"], "module_list_args":["PARTITIONS {num_partitions} TYPE redislabs"] }}' \
@@ -79,24 +85,20 @@ def create_database(db_name, num_shards, max_memory, replication):
         num_shards=num_shards, num_partitions=num_shards, mem_size=int(max_memory)*1000000000, 
         coord_uid=coord_uid, replication='true' if replication else 'false'))
     
+    puts(green("Successfully created database with {} shards!".format(num_shards)))
 
-def get_module(modulename, s3_ak, s3_sk):
-    
-    run('s3cmd get --access_key="{}" --secret_key="{}" --force s3://redismodules/{}/{}.`uname -s`-`uname -m`.latest.zip {}.zip'
-        .format(s3_ak, s3_sk, modulename, modulename, modulename))
+
+
+def download_http(url, dest):
+    run('curl -# -o {} {}'.format(dest, url))
 
 @task
 @roles("rlec_master")
-def get_modules(s3_ak, s3_sk):
-    """
-    Download the latest versions of both needed modules to the destination server
-    """
-    # Install pip if not present
-    sudo("which pip || apt-get install python-pip")
-    # Install s3cmd if not present
-    sudo("which s3cmd || pip install install s3cmd")
-
-    get_module('rscoordinator', s3_ak, s3_sk)
+def get_module():
+    download_http(
+                'https://redismodules.s3.amazonaws.com/rscoordinator/rscoordinator.Linux-x86_64.latest.zip', 
+                module_file)
+    
   
 
 @roles("rlec_master")
@@ -106,7 +108,7 @@ def upload_modules(rscoord_mod):
     """
 
     if rscoord_mod:
-        put(rscoord_mod, 'rscoordinator.zip')
+        put(rscoord_mod, module_file)
   
 
 

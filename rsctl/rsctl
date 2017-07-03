@@ -41,13 +41,11 @@ def cli(host, user, pem, rl_user , rl_password, rl_datadir):
 
 
 @cli.command()
-@click.option('--s3_accesskey', prompt = 'S3 Access Key',  help = 'S3 Access Key')
-@click.option('--s3_secretkey', prompt = 'S3 Secret Key',  help = 'S3 Secret Key')
-def get_module(s3_accesskey, s3_secretkey):
+def get_module():
     """
     Download RS and Coordinator module to remote server
     """
-    fab.execute(tasks.get_modules, s3_accesskey, s3_secretkey)
+    fab.execute(tasks.get_module)
 
 
 @cli.command()
