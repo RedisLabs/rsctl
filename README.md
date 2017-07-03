@@ -4,7 +4,7 @@ RediSearch/RSCoordinator distributed search control utility
 
 # About
 
-This package contains scripts to help administration and set-up of RedisLabs enterprise cluster, with RediSearch and RSCoordinator - providing a powerful distributed search engine over Redis.
+This package contains scripts to help administration and set-up of RedisLabs enterprise cluster, with RSCoordinator - the distributed RediSearch enterprise version.
 
 It is invoked via a single command - `rsctl`, that connects to a remote server and configures redis clusters on it. It is intended to run remotely and connect to the master Redis Pack server via SSH.
 
@@ -38,23 +38,23 @@ The steps for that are not detailed in this scope. We assume you have a cluster 
 
 Rsctl can automate this with the commands `rsctl bootstrap_machine` and `rsctl create_cluster`.
 
-### 1. Downloading the modules
+### 1. Downloading the module
 
-The module packages are stored on a special AWS S3 bucket. If you have access to it, use the command:
+The module package is stored on a special AWS S3 bucket. If you have access to it, use the command:
 
 ```sh
-$ rsctl get_modules [--s3_accesskey {KEY} --s3_secretkey {SECRET}]
+$ rsctl get_module [--s3_accesskey {KEY} --s3_secretkey {SECRET}]
 ```
 
-This downloads the **latest versions** of both modules to the destinatino machine, but does not install them yet. If the S3 credentials are not provided, you will be prompted to provide them. The AWS S3 keypair must be authorized to access the bucket where the modules are stored.
+This downloads the **latest version** of  the  module **to the destination machine**, but does not install it yet. If the S3 credentials are not provided, you will be prompted to provide them. The AWS S3 key-pair must be authorized to access the bucket where the module is stored.
 
 **NOTE:** If you do not have access, but have received the module package files manually, you can either upload them to the home directory of the ssh user on the server, or use the following command:
 
 ```sh
-$  rsctl upload_modules --redisearch /path/to/redisearch.zip --coordinator /path/to/rscoordinator.zip
+$  rsctl upload_module rscoordinator.zip
 ```
 
-### 2. Create the database with the modules
+### 2. Create the database with the 
 
 You need to provide:
 1. The desired database name.
@@ -136,11 +136,11 @@ Options:
     LICENSE file path on the local machine (gets uploaded)
 ```
 
-# rsctl get_modules
+# rsctl get_module
 
-Downloads the modules from AWS S3. 
+Downloads the coordinated search module from AWS S3. 
 
-**NOTE**: The AWS S3 keypair must be authorized to access the bucket where the modules are stored. Contact @Dvir for further details.
+**NOTE**: The AWS S3 keypair must be authorized to access the bucket where the module is stored. Contact @Dvir for further details.
 
 Options:
 
@@ -154,24 +154,22 @@ Options:
     S3 Secret Key
 ```
 
-# rsctl upload_modules
+# rsctl upload_module {module-file.zip}
 
-Upload module packages from the local machine to the server. Use this instead of get_modules when you do not have access to the S3 bucket where the modules are stored.
+Upload module package from the local machine to the server. Use this instead of get_module when you do not have access to the S3 bucket where the module is stored.
 
 Options:
 ```
-  --redisearch TEXT   
+  module name: 
     
-    Local RediSearch packge file path
+    Positional argument (must follow the command name). e.g.:
 
-  --coordinator TEXT  
-    
-    Local RSCoordinator packge file path
+    rsctl upload_module rscoordinator.zip
 ```
 
 # rsctl create_db
 
-Creates a new database with both modules loaded. 
+Creates a new database with the module loaded
 
 Options
 

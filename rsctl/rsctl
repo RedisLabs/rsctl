@@ -43,9 +43,9 @@ def cli(host, user, pem, rl_user , rl_password, rl_datadir):
 @cli.command()
 @click.option('--s3_accesskey', prompt = 'S3 Access Key',  help = 'S3 Access Key')
 @click.option('--s3_secretkey', prompt = 'S3 Secret Key',  help = 'S3 Secret Key')
-def get_modules(s3_accesskey, s3_secretkey):
+def get_module(s3_accesskey, s3_secretkey):
     """
-    Download RS and Coordinator modules
+    Download RS and Coordinator module to remote server
     """
     fab.execute(tasks.get_modules, s3_accesskey, s3_secretkey)
 
@@ -81,10 +81,10 @@ def create_cluster(name, license_file):
     fab.execute(tasks.create_cluster, name, license_file)
 
 @cli.command()
-@click.option('--coordinator', prompt = 'RSCoordinator package file', default='rscoordinator.zip', help='Local RSCoordinator packge file path')
-def upload_modules(coordinator):
+@click.argument('coordinator', default='rscoordinator.zip')
+def upload_module(coordinator):
     """
-    Upload module packages from the local machine to the server. 
+    [rscoordinator.zip] --- Upload module packages from the local machine to the server. 
     """
     fab.execute(tasks.upload_modules, coordinator)
 
