@@ -80,7 +80,7 @@ def create_database(db_name, num_shards, max_memory, replication):
     coord_uid = deploy_module(module_file)
     run("""curl -k -X POST -u "{rlec_user}:{rlec_pass}" -H "Content-Type: application/json" \
         -d '{{ "name": "{db_name}", "replication":{replication}, "sharding":true, "shards_count":{num_shards}, "version": "4.0", "memory_size": {mem_size}, "type": "redis", \
-        "module_list":["{coord_uid}"], "module_list_args":["PARTITIONS {num_partitions} TYPE redislabs"] }}' \
+        "module_list":["{coord_uid}"], "module_list_args":["PARTITIONS {num_partitions}"] }}' \
         https://127.0.0.1:9443/v1/bdbs""".format(rlec_user=config.rlec_user, rlec_pass=config.rlec_password, db_name=db_name,
         num_shards=num_shards, num_partitions=num_shards, mem_size=int(max_memory)*1000000000, 
         coord_uid=coord_uid, replication='true' if replication else 'false'))
