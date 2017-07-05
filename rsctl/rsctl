@@ -50,14 +50,15 @@ def get_module():
 
 @cli.command()
 @click.option('--name', prompt = 'Database Name', default='mydb', help='Database Name')
-@click.option('--shards', prompt = 'Number of Search Partitions (Shards)', default=3, help='Number of Search Partitions (Shards)')
+@click.option('--shards', prompt = 'Number of Redis Sahrds', default=3, help='Number of Redis Shards')
+@click.option('--partitions', prompt = 'Number of Index Partitions (>=shards)', default=3, help='Number of Index Partitions')
 @click.option('--maxmemory', prompt='Database Memory Limit (in GB)', default='4', help='Database Memory Limit (in GB)')
 @click.option('--replication',is_flag=True, default=False, prompt='Enable Replication', help='If set, replication is enabled')
-def create_db(name, shards, maxmemory, replication):
+def create_db(name, shards, partitions, maxmemory, replication):
     """
     Create a new RS/RL Database
     """
-    fab.execute(tasks.create_database, name, shards, maxmemory, replication)
+    fab.execute(tasks.create_database, name, shards, partitions, maxmemory, replication)
 
 @cli.command()
 @click.option('--rlec_installer', prompt = 'Path to Redis Pack installation .tar file',  help = 'Path to Redis Pack installation .tar file')
